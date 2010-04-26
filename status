@@ -1,0 +1,43 @@
+#!/bin/zsh
+
+INTERVAL=1
+IMAGES="/home/mixer/.dzen2/cur"
+CPUUSE=0
+CPUALL=0
+CPUNUM=`awk '/^cpu[^ ]/ { print }' /proc/stat | wc -l`
+
+while true; do
+	newcpuuse=`awk  '/^cpu / { print ($2+$3+$4) }' /proc/stat`
+	newcpuall=`awk  '/^cpu / { print $2+$3+$4+$5 }' /proc/stat`
+	cpu=$((100*($newcpuuse-$CPUUSE)/($newcpuall-$CPUALL)))
+	CPUUSE=$newcpuuse
+	CPUALL=$newcpuall
+	CPU="^i($IMAGES/cpu.xbm)"$cpu"%"
+
+	temp=`cat /proc/acpi/thermal_zone/CPUZ/temperature | awk '{ print $2 }'`
+	TEMP="^i($IMAGES/temp.xbm)"$temp"C"
+	
+	date=`date +'%d.%m.%y'`
+	DATE="^i($IMAGES/clock.xbm)"$date
+
+	time=`date +'%H:%M:%S'`
+	TIME="^i($IMAGES/clock.xbm)^fg($FG2)^bg($BG2) "$time" ^bg()^fg()"
+
+	volume=`amixer get Master | awk '/^  Front Left/ { print $5 }' | tr -d '[]'`
+	VOLUME="^i($IMAGES/vol-hi.xbm)"$volume
+	
+	brightness=`brightness`
+	BRIGHTNESS="^i($IMAGES/load.xbm)"$brightness
+
+	battery_cur=`cat /sys/class/power_supply/BAT0/charge_now`
+	battery_max=`cat /sys/class/power_supply/BAT0/charge_full`
+	battery=$((100*$battery_cur/$battery_max))
+	BATTERY="^i($IMAGES/power-bat.xbm)"$battery"%"
+
+#	mail=`check_gmail`
+#	MAIL="GMail: $mail"
+
+	echo "$BRIGHTNESS $VOLUME $CPU $TEMP $BATTERY $DATE $TIME"
+	sleep $INTERVAL
+done
+
