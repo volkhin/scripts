@@ -1,0 +1,5 @@
+#!/bin/bash
+
+URL="http://omploader.org"`curl -s -F file1=@$1 http://omploader.org/upload | grep -o -m 1 "/v[A-Za-z0-9+\/]*"`
+echo $URL
+

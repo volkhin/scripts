@@ -1,0 +1,11 @@
+#!/bin/sh  
+FORISMATIC_API_ANSWER=~/.forismatic 
+FORISMATIC_API_QUOTE=$( cat $FORISMATIC_API_ANSWER | xml_grep -t '/forismatic/quote/quoteText' )  
+FORISMATIC_API_AUTHOR=$( cat $FORISMATIC_API_ANSWER | xml_grep -t '/forismatic/quote/quoteAuthor' )  
+echo $FORISMATIC_API_QUOTE  | fold -s -w 72 
+if [ -n "$FORISMATIC_API_AUTHOR" ] ; then     
+    echo --$FORISMATIC_API_AUTHOR 
+fi 
+
+echo curl --silent --data-urlencode "method=getQuote" http://www.forismatic.com/api/1.0/ > "$FORISMATIC_API_ANSWER" & 
+

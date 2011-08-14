@@ -1,0 +1,41 @@
+#!/bin/sh
+BRIGHTNESS_CUR=`cat /sys/class/backlight/*/actual_brightness`
+BRIGHTNESS_MAX=`cat /sys/class/backlight/*/max_brightness`
+FILE="/sys/class/backlight/*/brightness"
+
+case $1 in 
+	up)
+		BRIGHTNESS_NEW=$(($BRIGHTNESS_CUR+1))
+		if [ $BRIGHTNESS_NEW -gt $BRIGHTNESS_MAX ]; then
+			BRIGHTNESS_NEW=$BRIGHTNESS_MAX
+		fi
+		echo $BRIGHTNESS_NEW | tee $FILE
+		;;
+
+	down)
+		BRIGHTNESS_NEW=$(($BRIGHTNESS_CUR-1))
+		if [ $BRIGHTNESS_NEW -lt 0 ]; then
+			BRIGHTNESS_NEW=0
+		fi
+		echo $BRIGHTNESS_NEW | tee $FILE
+		;;
+
+	"")
+		echo $(($BRIGHTNESS_CUR*100/$BRIGHTNESS_MAX))%
+		;;
+
+	bar)
+		for i in `seq 1 $BRIGHTNESS_CUR`
+		do
+			DATA=$DATA"#"
+		done;
+
+		for i in `seq 1 $(($BRIGHTNESS_MAX-$BRIGHTNESS_CUR))`
+		do
+			DATA=$DATA"."
+		done;
+
+		echo $DATA
+		;;
+esac
+

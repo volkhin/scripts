@@ -1,0 +1,13 @@
+#!/bin/sh
+
+SOURCE_DIR=~/olymp/_start
+
+if [ "$1" = "" ]
+then
+  echo "You have to specify project name."
+  exit
+fi
+
+mkdir -p $1
+cp -i $SOURCE_DIR/* $1
+

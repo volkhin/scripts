@@ -1,0 +1,3 @@
+#!/bin/sh
+cd ~/.mozilla/firefox/*.default/
+for i in *.sqlite; do echo "VACUUM;" | sqlite3 $i ; done

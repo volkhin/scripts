@@ -1,0 +1,82 @@
+#! /usr/bin/env python
+# -*- coding: utf-8 -*-
+"""This script allow users to translate a string 
+from one language to another with Google translate"""
+
+import sys
+import re
+import urllib
+import urllib2
+import json
+import pynotify
+import pygtk
+import gtk
+
+origin = ""
+outputData = ""
+
+def addOutput(s):
+    global outputData
+    outputData = outputData + str(s)+ "\n"
+
+def output():
+    global origin, outputData
+    pynotify.Notification(origin, outputData, "Google Translate").show()
+
+def output_params(data):
+    """print parameters from list"""
+    for val in data:
+        if isinstance(val, basestring):
+            addOutput("\t " + val)
+
+def main():
+    """
+    Usage:
+        first arg - string to translate
+        second arg - source lang
+        third arg - target lang    
+    Example:
+        translate.py 'text to translate' en ru
+        translate.py 'text to translate' ru en
+    """
+
+    global origin
+    url = "http://translate.google.com/translate_a/t?%s"
+    list_of_params = {'client' : 't',  
+            'hl' : 'en', 
+            'multires' : '1', }
+
+    clipboard = gtk.clipboard_get()
+    origin = clipboard.wait_for_text()
+    list_of_params.update({'text' : origin,
+        'sl' : 'en',
+        'tl' : 'ru' })
+
+    request = urllib2.Request(url % urllib.urlencode(list_of_params), 
+            headers={ 'User-Agent': 'Mozilla/5.0', 'Accept-Charset': 'utf-8' })
+    res = urllib2.urlopen(request).read()
+
+    fixed_json = re.sub(r',{2,}', ',', res).replace(',]', ']')    
+    data = json.loads(fixed_json)
+
+    #simple translation
+    addOutput("%s / %s / %s" % (data[0][0][0], data[0][0][1], 
+        data[0][0][2] or data[0][0][3]))
+
+    #abbreviation
+    if not isinstance(data[1], basestring):
+        addOutput(data[1][0][0])
+        output_params(data[1][0][1])
+
+    #interjection    
+    try:
+        if not isinstance(data[1][1], basestring):
+            addOutput(data[1][1][0])
+            output_params(data[1][1][1])
+    except Exception:
+        addOutput("no interjection")
+
+    output()
+
+if __name__ == '__main__':
+    main()

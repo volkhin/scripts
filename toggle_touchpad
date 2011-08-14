@@ -1,0 +1,10 @@
+#!/bin/sh
+
+val=`synclient | grep TouchpadOff | awk '{print $3}'`
+
+if [ "$val" == "0" ]; then
+  synclient TouchpadOff=1
+else
+  synclient TouchpadOff=0
+fi
+

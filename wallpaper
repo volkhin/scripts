@@ -1,0 +1,9 @@
+#!/bin/sh
+if test -s "$1"; then
+	echo "#$1#"
+	rm ~/.wallpaper
+	ln -s $1 ~/.wallpaper
+fi
+
+feh --bg-scale ~/.wallpaper
+

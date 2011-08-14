@@ -1,0 +1,33 @@
+#!/bin/zsh
+
+temp=`cat /proc/acpi/thermal_zone/CPUZ/temperature | awk '{ print $2 }'`
+TEMP="Temperature: "$temp"C"
+
+time=`date +'%H:%M:%S %d.%m.%y'`
+TIME=$time
+
+volume=`amixer get Master | awk '/^  Front Left/ { print $5 }' | tr -d '[]'`
+VOLUME="Volume: "$volume
+
+brightness=`brightness`
+BRIGHTNESS="Brightness: "$brightness
+
+battery_cur=`cat /sys/class/power_supply/BAT0/charge_now`
+battery_max=`cat /sys/class/power_supply/BAT0/charge_full`
+battery=$((100*$battery_cur/$battery_max))
+BATTERY="Battery: "$battery"%"
+
+#mail=`gmail`
+#MAIL="Inbox: $mail"
+
+#	mail=`check_gmail`
+#	MAIL="GMail: $mail"
+
+TEXT="$TIME
+$BRIGHTNESS
+$VOLUME
+$TEMP
+$BATTERY"
+
+echo $TEXT
+#notify-send -i stock_script "System status" $TEXT 

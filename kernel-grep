@@ -1,0 +1,4 @@
+#!/bin/sh
+
+grep -i $1 /usr/src/linux/.config
+

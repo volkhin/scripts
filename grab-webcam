@@ -1,0 +1,6 @@
+#!/bin/zsh
+
+if [ $(( $RANDOM % 60 )) -eq 1 ]; then
+	v4lctl snap jpeg full ~/images/Webcam/`date +%F_%T`.jpeg
+fi
+

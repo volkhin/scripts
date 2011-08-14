@@ -1,0 +1,10 @@
+#!/bin/sh
+
+MCABBER_NO="0"
+if [ -e "/home/mixer/.mcabber/mcabber.state" ]; then
+	MCABBER_NO=`cat /home/mixer/.mcabber/mcabber.state | wc -l`
+fi
+
+if [ "$MCABBER_NO" -gt "0" ]; then
+	echo "$MCABBER_NO"
+fi
